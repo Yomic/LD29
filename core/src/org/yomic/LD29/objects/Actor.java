@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Actor extends TiledObject implements ActorInterface {
 	
 	boolean harmful;
-	public enum ActorType {Urchin, Pearl, PearlDoor}
+	public enum ActorType {Urchin, Pearl, PearlDoor, SavePoint, Spikes}
 	public ActorType thisType;
 
 	public Actor(Sprite sprite, int x, int y) {

@@ -45,25 +45,30 @@ public class Urchin extends Actor {
 				velocity.x = speed;
 			}
 			
-			//TODO get urchins to reverse direction
-			setX(getX() + velocity.x * delta);
-			getNewRect();
-			changeDir = checkCollisionX(tiles, previousX);
-						
-			setY(getY() + velocity.y * delta);
-			getNewRect();
-			changeDir = checkCollisionY(tiles, previousY);
+			if (Math.abs(velocity.x) > 0) {
+				setX(getX() + velocity.x * delta);
+				getNewRect();
+				changeDir = checkCollisionX(tiles, previousX);
+			}			
+			
+			if (Math.abs(velocity.y) > 0) {
+				setY(getY() + velocity.y * delta);
+				getNewRect();
+				changeDir = checkCollisionY(tiles, previousY);
+			}			
 			
 			if (changeDir) {
 				if (currentFacing == UrchinFacing.Up) { 
-					currentFacing = UrchinFacing.Down;					
-				}
-				if (currentFacing == UrchinFacing.Down) {
-					currentFacing = UrchinFacing.Up;					
+					currentFacing = UrchinFacing.Down;
+				} else if (currentFacing == UrchinFacing.Down) {
+					currentFacing = UrchinFacing.Up;
 				}				
 				
-				if (currentFacing == UrchinFacing.Left) currentFacing = UrchinFacing.Right;
-				if (currentFacing == UrchinFacing.Right) currentFacing = UrchinFacing.Left;				
+				if (currentFacing == UrchinFacing.Left) {
+					currentFacing = UrchinFacing.Right;					
+				} else if (currentFacing == UrchinFacing.Right) {
+					currentFacing = UrchinFacing.Left;					
+				}
 			}
 			
 		}

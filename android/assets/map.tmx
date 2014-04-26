@@ -52,6 +52,11 @@
     <property name="pearl" value=""/>
    </properties>
   </tile>
+  <tile id="18">
+   <properties>
+    <property name="savepoint" value=""/>
+   </properties>
+  </tile>
   <tile id="19">
    <properties>
     <property name="urchinLR" value=""/>
@@ -70,7 +75,7 @@
  </layer>
  <layer name="objects" width="100" height="300">
   <data encoding="base64" compression="zlib">
-   eJzt2tFugjAUAFBM9jRxc2b//62LWUiIQ7wljF7KeTixSoG2l0JtOXVddwIAYDNvwXzvCcp6FOeZ2NwSlI+/viZ+6xOU6+iuCcpwZNHnC/Br6DPnSucnHqPHNMDeuaflZVyQn/6zH69idQ7mndsWPcbU8cbzga4ravpOUAb4CIjuU3qu2nXPbGrN49U6SMk6iTWVmGtAdJ9n22vXEdiXyyj9maA8R3ePxzCmF4/6Wuwfe35nSf/IpcX+scTU+2a14tFS/9j7f/xW+0dLdSmZs1qSP6PIfF2J2vXJpLRNLg/f+0B6a/2Tz7n8/UR6bItx6GPblu4TmbcrmdNbQ+n5ti7fGsbjqSEeazxzllwPLVty/7634U08/lVp267Vl8UjF/FYl3EuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALfgBeSB/Lg==
+   eJzt28FugzAMAFAq7TRY13X7/2+dekBiFTCHMWLgHZ6KSigOltM0hUvTNBeAk3pLEAPswXuCGI7kJdjuNUGsZ9EW5gYYd0sQw5nNjWHXBPFBNn3NtJXOTzxHz9sAe2dMy8u8IL9o/XwmiPXsfstVG2w7ty/6GWOfN1wPNC5T01eCGOAaED2m9Fy1+55ZF3yvZP/Stmd2C4geM7W/dh+BfRne6+Zenvoe+ejn9PJR3xHr454ghr/kQ33kccT6WOIjQQx9Po5UH3v/jX/U+jhSX0rWrJa0zyiyXleidn8yKb0mz88bdYHtrXUTr3Ptu5HtoS3moUue5RoeE1m3K1nTW0Pp+baObw3D+VSfjzW+czzb99OS8ftxDe/y8a9Kr+1atSwfucjHusxzt7fknrqp+aX/m7cjBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkNs3qzF/eQ==
   </data>
  </layer>
 </map>

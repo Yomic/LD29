@@ -8,6 +8,7 @@ import org.yomic.LD29.objects.Actor.ActorType;
 import org.yomic.LD29.objects.Pearl;
 import org.yomic.LD29.objects.PearlDoor;
 import org.yomic.LD29.objects.Player;
+import org.yomic.LD29.objects.SavePoint;
 import org.yomic.LD29.objects.TiledObject;
 import org.yomic.LD29.objects.Urchin;
 import org.yomic.LD29.objects.Wall;
@@ -82,6 +83,9 @@ public class GameScreen implements Screen, InputProcessor {
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("pearldoor")) {
 					objects.add(new PearlDoor(new Sprite(pearlDoorTexture), true, x, y));
+				}
+				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("savepoint")) {
+					objects.add(new SavePoint(new Sprite(saveTexture), x, y));
 				}
 				
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("spikesT")) {

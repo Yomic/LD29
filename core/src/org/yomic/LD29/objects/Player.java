@@ -39,6 +39,7 @@ public class Player extends Sprite implements InputProcessor {
 	
 	public void reset() {
 		this.currentState = STATE.Idle;
+		if (facing == FACING.LEFT) this.flip(true, false);
 		this.facing = FACING.RIGHT;
 		rect = new Rectangle();
 		this.setPosition(savedPosition.x, savedPosition.y);
@@ -94,6 +95,10 @@ public class Player extends Sprite implements InputProcessor {
 					break;
 				}				
 			}
+			
+			if (a.thisType == ActorType.SavePoint && this.rect.overlaps(a.rect)) {
+				savedPosition.set(getX(), getY());
+			}
 		}
 		
 	}
@@ -117,6 +122,11 @@ public class Player extends Sprite implements InputProcessor {
 					getNewRect();
 					break;
 				}				
+			}
+			
+			if (a.thisType == ActorType.SavePoint && this.rect.overlaps(a.rect)) {
+				savedPosition.set(getX(), getY());
+				System.out.println("Saved at: " + savedPosition.x + ", " + savedPosition.y);
 			}
 		}
 		
