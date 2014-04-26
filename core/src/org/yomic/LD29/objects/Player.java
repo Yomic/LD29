@@ -2,6 +2,8 @@ package org.yomic.LD29.objects;
 
 import java.util.ArrayList;
 
+import org.yomic.LD29.objects.Actor.ActorType;
+
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,42 +19,62 @@ public class Player extends Sprite implements InputProcessor {
 	private STATE currentState;
 	enum FACING {LEFT, RIGHT};
 	private FACING facing;
+	Vector2 savedPosition;
 	
 	Sprite sprite;
 	Vector2 acceleration = new Vector2();
 	Vector2 velocity = new Vector2();
 	Rectangle rect;
 	
+	int pearls;
+	
 	private float moveSpeed = 240;
 	
-	public Player (Sprite sprite) {
+	public Player (Sprite sprite, int x, int y) {
 		super(sprite);
-		
+		this.pearls = 0;
+		savedPosition = new Vector2(x, y);
+		reset();
+	}
+	
+	public void reset() {
 		this.currentState = STATE.Idle;
 		this.facing = FACING.RIGHT;
 		rect = new Rectangle();
+		this.setPosition(savedPosition.x, savedPosition.y);
 	}
 	
-	public void update(float delta, ArrayList<TiledObject> tiledObjects) {
+	public void update(float delta, ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors) {
 		
 		float previousX = getX();
 		float previousY = getY();
 		
 		setX(getX() + velocity.x * delta);
 		getNewRect();
-		checkCollisionX(tiledObjects, previousX);
+		checkCollisionX(tiledObjects, actors, previousX);
 		
 		setY(getY() + velocity.y * delta);
 		getNewRect();
-		checkCollisionY(tiledObjects, previousY);
+		checkCollisionY(tiledObjects, actors, previousY);
 		
 		if (velocity.x == 0 && velocity.y == 0) {
 			this.currentState = STATE.Idle;
 		}
 		
+		for (Actor a : actors) {
+			if (a.isHarmful() && this.rect.overlaps(a.rect)) {
+				//TODO play SFX; let player know that was a bad thing to touch
+				reset();
+			}			
+		}
+		
+	}
+	
+	public void givePearl() {
+		this.pearls += 1;
 	}
 
-	private void checkCollisionX(ArrayList<TiledObject> tiledObjects, float previousX) {
+	private void checkCollisionX(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousX) {
 		
 		for (TiledObject o : tiledObjects) {
 			if (this.rect.overlaps(o.rect) && o.blocked) {
@@ -62,16 +84,39 @@ public class Player extends Sprite implements InputProcessor {
 			}
 		}
 		
+		for (Actor a : actors) {
+			if (a.blocked && this.rect.overlaps(a.rect)) {
+				if (a.thisType == ActorType.PearlDoor && this.pearls > 0 || !a.alive) {					
+					//go through
+				} else {					
+					setX(previousX);
+					getNewRect();
+					break;
+				}				
+			}
+		}
+		
 	}
 	
-	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, float previousY) {
+	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousY) {
 		
 		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {
-				
+			if (this.rect.overlaps(o.rect) && o.blocked) {				
 				setY(previousY);
 				getNewRect();
 				break;
+			}			
+		}
+		
+		for (Actor a : actors) {
+			if (a.blocked && this.rect.overlaps(a.rect)) {
+				if (a.thisType == ActorType.PearlDoor && pearls > 0 || !a.alive) {
+					//go through
+				} else {
+					setY(previousY);
+					getNewRect();
+					break;
+				}				
 			}
 		}
 		
@@ -111,6 +156,7 @@ public class Player extends Sprite implements InputProcessor {
 			if (facing == FACING.LEFT) this.flip(true, false);
 			facing = FACING.RIGHT;
 			break;
+				
 		}
 		return true;
 	}

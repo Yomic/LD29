@@ -1,0 +1,74 @@
+package org.yomic.LD29.objects;
+
+import java.util.ArrayList;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+
+public class Urchin extends Actor {
+	
+	enum UrchinFacing {Left, Right, Up, Down}
+	UrchinFacing currentFacing;
+	Vector2 velocity = new Vector2();
+	int speed = 120;
+
+	public Urchin(Sprite sprite, int x, int y, boolean UD) {
+		super(sprite, x, y);
+		this.thisType = ActorType.Urchin;
+		this.harmful = true;
+		if (UD) {
+			currentFacing = UrchinFacing.Up;
+		} else {
+			currentFacing = UrchinFacing.Right;
+		}
+		
+	}
+
+	@Override
+	public void update(float delta, ArrayList<TiledObject> tiles, Player player) {
+		
+		if (isAlive()) {
+			
+			float previousX = getX();
+			float previousY = getY();
+			boolean changeDir = false;
+			
+			getNewRect();
+			
+			if (currentFacing == UrchinFacing.Up) {
+				velocity.y = speed;
+			} else if (currentFacing == UrchinFacing.Down) {
+				velocity.y = -speed;
+			} else if (currentFacing == UrchinFacing.Left) {
+				velocity.x = -speed;
+			} else if (currentFacing == UrchinFacing.Right) {
+				velocity.x = speed;
+			}
+			
+			//TODO get urchins to reverse direction
+			setX(getX() + velocity.x * delta);
+			getNewRect();
+			changeDir = checkCollisionX(tiles, previousX);
+						
+			setY(getY() + velocity.y * delta);
+			getNewRect();
+			changeDir = checkCollisionY(tiles, previousY);
+			
+			if (changeDir) {
+				if (currentFacing == UrchinFacing.Up) { 
+					currentFacing = UrchinFacing.Down;					
+				}
+				if (currentFacing == UrchinFacing.Down) {
+					currentFacing = UrchinFacing.Up;					
+				}				
+				
+				if (currentFacing == UrchinFacing.Left) currentFacing = UrchinFacing.Right;
+				if (currentFacing == UrchinFacing.Right) currentFacing = UrchinFacing.Left;				
+			}
+			
+		}
+	}
+	
+	
+	
+}

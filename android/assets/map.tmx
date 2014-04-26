@@ -2,34 +2,59 @@
 <map version="1.0" orientation="orthogonal" width="100" height="300" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32">
   <image source="tileset.png" width="256" height="512"/>
+  <tile id="3">
+   <properties>
+    <property name="seaweed" value=""/>
+   </properties>
+  </tile>
   <tile id="8">
    <properties>
     <property name="blocked" value=""/>
    </properties>
   </tile>
+  <tile id="10">
+   <properties>
+    <property name="rock" value=""/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="urchinUD" value=""/>
+   </properties>
+  </tile>
   <tile id="12">
    <properties>
-    <property name="spikes" value=""/>
+    <property name="spikesL" value=""/>
    </properties>
   </tile>
   <tile id="13">
    <properties>
-    <property name="spikes" value=""/>
+    <property name="spikesT" value=""/>
    </properties>
   </tile>
   <tile id="14">
    <properties>
-    <property name="spikes" value=""/>
+    <property name="spikesR" value=""/>
    </properties>
   </tile>
   <tile id="15">
    <properties>
-    <property name="spikes" value=""/>
+    <property name="spikesB" value=""/>
    </properties>
   </tile>
   <tile id="16">
    <properties>
-    <property name="door" value=""/>
+    <property name="pearldoor" value=""/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="pearl" value=""/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="urchinLR" value=""/>
    </properties>
   </tile>
  </tileset>
@@ -45,7 +70,7 @@
  </layer>
  <layer name="objects" width="100" height="300">
   <data encoding="base64" compression="zlib">
-   eJzt2NFugjAUAFBM9gZu6v9/7OIDCWPT3bKOXuoxORFDC20vt9SehmE4AQCwm7cEbeCrUWyADpjDoMycM2Oj+xOP0foY4OjMaXlZF+Qnf47jt1iNwbLPzkWv8dP1lvuBnivg1b0HROuU3qt13zObhu+fKVCn5Pqt+3gEl4BonUfnW/cROJbz4vgjQXte3T0e8ztVPNrrMT9uCdrwl3jIjzx6zI8trgnaMMejp/w4+n/8XvOjp76U7FltKZ9RZL+uROv+ZFI6JufV7ylwvLfpwfez8mvrMnusQ9djW1onsm9XsqdXQ+n99m5fDcv11ByPGu+cLc9Dz7bM3/cxvInHvyod21q5LB65iEdd1rkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD04BNsin7G
+   eJzt2tFugjAUAFBM9jRxc2b//62LWUiIQ7wljF7KeTixSoG2l0JtOXVddwIAYDNvwXzvCcp6FOeZ2NwSlI+/viZ+6xOU6+iuCcpwZNHnC/Br6DPnSucnHqPHNMDeuaflZVyQn/6zH69idQ7mndsWPcbU8cbzga4ravpOUAb4CIjuU3qu2nXPbGrN49U6SMk6iTWVmGtAdJ9n22vXEdiXyyj9maA8R3ePxzCmF4/6Wuwfe35nSf/IpcX+scTU+2a14tFS/9j7f/xW+0dLdSmZs1qSP6PIfF2J2vXJpLRNLg/f+0B6a/2Tz7n8/UR6bItx6GPblu4TmbcrmdNbQ+n5ti7fGsbjqSEeazxzllwPLVty/7634U08/lVp267Vl8UjF/FYl3EuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALfgBeSB/Lg==
   </data>
  </layer>
 </map>

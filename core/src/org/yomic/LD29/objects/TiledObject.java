@@ -9,6 +9,7 @@ public class TiledObject extends Sprite {
 
 	boolean blocked;
 	Rectangle rect;
+	boolean alive;
 	
 	public TiledObject(Sprite sprite, boolean blocked, int x, int y) {
 		super(sprite);
@@ -19,14 +20,21 @@ public class TiledObject extends Sprite {
 		this.rect = new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 	
-	public void update(float delta) {
-		this.rect = new Rectangle(getX(), getY(), getWidth(), getHeight());
-	}
-	
 	public void drawRect(ShapeRenderer shapeRenderer) {
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
 		shapeRenderer.end();
 	}
 	
+	public void die() {
+		this.alive = false;
+	}
+	
+	public boolean isAlive() {
+		return this.alive;
+	}
+
+	public void update(Player player) {
+		
+	}
 }
