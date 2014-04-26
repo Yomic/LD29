@@ -126,7 +126,6 @@ public class Player extends Sprite implements InputProcessor {
 			
 			if (a.thisType == ActorType.SavePoint && this.rect.overlaps(a.rect)) {
 				savedPosition.set(getX(), getY());
-				System.out.println("Saved at: " + savedPosition.x + ", " + savedPosition.y);
 			}
 		}
 		

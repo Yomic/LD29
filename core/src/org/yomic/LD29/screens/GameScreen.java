@@ -9,6 +9,8 @@ import org.yomic.LD29.objects.Pearl;
 import org.yomic.LD29.objects.PearlDoor;
 import org.yomic.LD29.objects.Player;
 import org.yomic.LD29.objects.SavePoint;
+import org.yomic.LD29.objects.Spikes;
+import org.yomic.LD29.objects.Spikes.SpikeDir;
 import org.yomic.LD29.objects.TiledObject;
 import org.yomic.LD29.objects.Urchin;
 import org.yomic.LD29.objects.Wall;
@@ -90,16 +92,16 @@ public class GameScreen implements Screen, InputProcessor {
 				
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("spikesT")) {
 					//TODO add new Spikes instead of Actor
-					objects.add(new Actor(new Sprite(spikeTtexture), x, y));
+					objects.add(new Spikes(new Sprite(spikeTtexture), x, y, SpikeDir.Top));
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("spikesB")) {					
-					objects.add(new Actor(new Sprite(spikeBtexture), x, y));
+					objects.add(new Spikes(new Sprite(spikeBtexture), x, y, SpikeDir.Bottom));
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("spikesL")) {					
-					objects.add(new Actor(new Sprite(spikeLtexture), x, y));
+					objects.add(new Spikes(new Sprite(spikeLtexture), x, y, SpikeDir.Left));
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("spikesR")) {					
-					objects.add(new Actor(new Sprite(spikeRtexture), x, y));
+					objects.add(new Spikes(new Sprite(spikeRtexture), x, y, SpikeDir.Right));
 				}
 				
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("urchinUD")) {
