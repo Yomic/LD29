@@ -41,7 +41,7 @@ public class Actor extends TiledObject implements ActorInterface {
 	boolean checkCollisionX(ArrayList<TiledObject> tiledObjects, float previousX) {
 		
 		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {				
+			if (this.rect.overlaps(o.rect) && o.blocked) {
 				setX(previousX);
 				getNewRect();
 				return true;

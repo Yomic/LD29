@@ -47,12 +47,6 @@ public class GameScreen implements Screen, InputProcessor {
 	Player player;
 	Animation playerAnimation;
 	Boss boss;
-	/*
-	Texture wallTexture, pearlTexture, pearlDoorTexture, starfishTexture, starfishDoorTexture, 
-	spikeBtexture, spikeTtexture, spikeLtexture, spikeRtexture, 
-	urchinTexture, saveTexture, bubbleTexture, seaweedTexture, rockTexture, bossTexture,
-	blackScreenTexture, creditsTexture, outro1Texture;
-	*/
 	
 	TextureRegion wallTexture, pearlTexture, pearlDoorTexture, starfishTexture, starfishDoorTexture, 
 	spikeBtexture, spikeTtexture, spikeLtexture, spikeRtexture, 
@@ -157,28 +151,6 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		spriteBatch = new SpriteBatch();
-		/*
-		wallTexture = new Texture(Gdx.files.internal("rock_wall_solid.png"));
-		pearlTexture = new Texture(Gdx.files.internal("pearl.png"));
-		pearlDoorTexture = new Texture(Gdx.files.internal("pearl_door.png"));
-		starfishTexture = new Texture(Gdx.files.internal("star.png"));
-		starfishDoorTexture = new Texture(Gdx.files.internal("star_door.png"));
-		spikeBtexture = new Texture(Gdx.files.internal("spike_bottom.png"));
-		spikeTtexture = new Texture(Gdx.files.internal("spike_top.png"));
-		spikeLtexture = new Texture(Gdx.files.internal("spike_left.png"));
-		spikeRtexture = new Texture(Gdx.files.internal("spike_right.png"));
-		urchinTexture = new Texture(Gdx.files.internal("urchin.png"));
-		saveTexture = new Texture(Gdx.files.internal("savepoint.png"));		
-		seaweedTexture = new Texture(Gdx.files.internal("seaweed.png"));
-		rockTexture = new Texture(Gdx.files.internal("rock.png"));
-		bossTexture = new Texture(Gdx.files.internal("boss.png"));
-		
-		blackScreenTexture = new Texture(Gdx.files.internal("blackScreen.png"));
-		creditsTexture = new Texture(Gdx.files.internal("Credits.png"));		
-		outro1Texture = new Texture(Gdx.files.internal("Outro1.png"));
-		blackScreen = new Sprite(blackScreenTexture);
-		outro1 = new Sprite(outro1Texture);
-		*/		
 		
 		atlas = new TextureAtlas();
 		atlas = new TextureAtlas(Gdx.files.internal("atlas/pack.pack"));
@@ -205,7 +177,8 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		player = new Player(new Sprite(new Texture(Gdx.files.internal("fish1.png"))), 14*32, 192*32);
 		
-				boss = new Boss(new Sprite(bossTexture), 52, 25);
+		boss = new Boss(new Sprite(bossTexture), 52, 25);
+		
 		keysSpawned = new boolean[6];
 		for (int i = 0; i < keysSpawned.length; i++) {
 			keysSpawned[i] = false;
@@ -282,7 +255,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
-		
+		int nearBy = 0;
 		for (Actor a : objects) {
 			if (a.isAlive() && a != null) {
 				boolean closeToPlayer = Math.abs(player.getX() - a.getX()) < LD29.CAMERA_WIDTH/2 || 
@@ -291,7 +264,7 @@ public class GameScreen implements Screen, InputProcessor {
 				if (a.thisType == ActorType.Pearl && closeToPlayer) a.update(delta, player);
 				if (a.thisType == ActorType.Starfish && closeToPlayer) a.update(delta, player);
 				if (a.thisType == ActorType.Urchin && closeToPlayer) {
-										
+					nearBy++;
 					a.update(delta, tiledObjects, player);
 					
 					if (player.isConfined()) {
@@ -303,7 +276,7 @@ public class GameScreen implements Screen, InputProcessor {
 				a.draw(spriteBatch);
 			}			
 		}
-		
+		System.out.println(nearBy);
 		if (showBoss) {
 			boss.setColor(bossTint, bossTint, bossTint, bossAlpha);
 			boss.draw(spriteBatch);

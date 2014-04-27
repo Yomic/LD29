@@ -33,8 +33,6 @@ public class Urchin extends Actor {
 			float previousY = getY();
 			boolean changeDir = false;
 			
-			getNewRect();
-			
 			if (currentFacing == UrchinFacing.Up) {
 				velocity.y = speed;
 			} else if (currentFacing == UrchinFacing.Down) {
