@@ -20,20 +20,40 @@ public class Player extends Sprite implements InputProcessor {
 	enum FACING {LEFT, RIGHT};
 	private FACING facing;
 	Vector2 savedPosition;
+	private boolean confined;
 	
 	Sprite sprite;
 	Vector2 acceleration = new Vector2();
 	Vector2 velocity = new Vector2();
 	Rectangle rect;
 	
-	int pearls;
+	int pearls, starfish, unlockedDoors;
+	
+	public void addDoorCounter() {
+		this.unlockedDoors += 1;
+		System.out.println("Unlocked " + this.unlockedDoors + " doors.");
+	}
+	
+	public int getUnlockedDoors() {
+		return this.unlockedDoors;
+	}
+	
+	public void resetDoorCounter() {
+		this.unlockedDoors = 0;
+	}
+	
+	public void setSavedPosition(int x, int y) {
+		this.savedPosition.set(x, y);
+	}
 	
 	private float moveSpeed = 240;
 	
 	public Player (Sprite sprite, int x, int y) {
 		super(sprite);
 		this.pearls = 0;
+		this.starfish = 0;
 		savedPosition = new Vector2(x, y);
+		this.confined = false;
 		reset();
 	}
 	
@@ -71,11 +91,25 @@ public class Player extends Sprite implements InputProcessor {
 		
 	}
 	
+	public void confine() {
+		this.confined = true;
+		this.savedPosition.set(53*32, getY()); //Mid screen
+	}
+	
 	public void givePearl() {
 		this.pearls += 1;
 	}
 
+	public void giveStarfish() {
+		this.starfish += 1;
+	}
+	
 	private void checkCollisionX(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousX) {
+		
+		if (getX() < 0 || getX() + getWidth() > 100*32) {
+			setX(previousX);
+			getNewRect();			
+		}
 		
 		for (TiledObject o : tiledObjects) {
 			if (this.rect.overlaps(o.rect) && o.blocked) {
@@ -87,7 +121,8 @@ public class Player extends Sprite implements InputProcessor {
 		
 		for (Actor a : actors) {
 			if (a.blocked && this.rect.overlaps(a.rect)) {
-				if (a.thisType == ActorType.PearlDoor && this.pearls > 0 || !a.alive) {					
+				if ((a.thisType == ActorType.PearlDoor && this.pearls > 0 || !a.alive) ||
+						(a.thisType == ActorType.StarfishDoor && this.starfish > 0 || !a.alive)) {					
 					//go through
 				} else {					
 					setX(previousX);
@@ -105,8 +140,21 @@ public class Player extends Sprite implements InputProcessor {
 	
 	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousY) {
 		
+		if (!confined) {
+			if (getY() < 0 || getY() + getHeight() > 300*32) {
+				setY(previousY);
+				getNewRect();
+			}
+		} else {
+			if (getY() + getHeight() >= 136*32) {
+				setY(136*32 - getHeight());
+				getNewRect();
+			}
+		}
+		
+		
 		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {				
+			if (this.rect.overlaps(o.rect) && o.blocked) {
 				setY(previousY);
 				getNewRect();
 				break;
@@ -115,7 +163,8 @@ public class Player extends Sprite implements InputProcessor {
 		
 		for (Actor a : actors) {
 			if (a.blocked && this.rect.overlaps(a.rect)) {
-				if (a.thisType == ActorType.PearlDoor && pearls > 0 || !a.alive) {
+				if ((a.thisType == ActorType.PearlDoor && this.pearls > 0 || !a.alive) ||
+						(a.thisType == ActorType.StarfishDoor && this.starfish > 0 || !a.alive)) {	
 					//go through
 				} else {
 					setY(previousY);
@@ -219,6 +268,8 @@ public class Player extends Sprite implements InputProcessor {
 		return false;
 	}
 
-	
+	public boolean isConfined() {
+		return this.confined;
+	}
 	
 }

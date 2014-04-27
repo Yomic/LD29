@@ -1,6 +1,6 @@
 package org.yomic.LD29;
 
-import org.yomic.LD29.screens.GameScreen;
+import org.yomic.LD29.screens.TitleScreen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,6 +16,6 @@ public class LD29 extends Game {
 	public void create () {
 		spriteBatch = new SpriteBatch();
 		
-		setScreen(new GameScreen(this));
+		setScreen(new TitleScreen(this));
 	}
 }
