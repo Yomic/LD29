@@ -16,8 +16,7 @@ public class Pearl extends Actor {
 			if (player.rect.overlaps(this.rect)) {
 				player.givePearl();
 				player.savedPosition.set(player.getX(), player.getY());
-				die();
-				System.out.println("pearls: " + player.pearls);
+				die();				
 			}
 		}
 	}

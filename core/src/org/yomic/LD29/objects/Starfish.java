@@ -15,10 +15,8 @@ public class Starfish extends Actor {
 		if (isAlive()) {			
 			if (player.rect.overlaps(this.rect)) {
 				player.giveStarfish();
-				//player.savedPosition.set(player.getX(), player.getY());
-				//We'll make this collectible when in danger so you don't have to worry about spawning next to danger
-				die();
-				System.out.println("starfish: " + player.starfish);
+				player.savedPosition.set(player.getX(), player.getY());				
+				die();				
 			}
 		}
 	}

@@ -54,13 +54,12 @@ public class Player extends Sprite implements InputProcessor {
 		this.starfish = 0;
 		savedPosition = new Vector2(x, y);
 		this.confined = false;
+		this.facing = FACING.RIGHT;
 		reset();
 	}
 	
 	public void reset() {
-		this.currentState = STATE.Idle;
-		if (facing == FACING.LEFT) this.flip(true, false);
-		this.facing = FACING.RIGHT;
+		this.currentState = STATE.Idle;		
 		rect = new Rectangle();
 		this.setPosition(savedPosition.x, savedPosition.y);
 	}
@@ -141,13 +140,13 @@ public class Player extends Sprite implements InputProcessor {
 	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousY) {
 		
 		if (!confined) {
-			if (getY() < 0 || getY() + getHeight() > 300*32) {
+			if (getY() < 0 || getY() + getHeight() > 200*32) {
 				setY(previousY);
 				getNewRect();
 			}
 		} else {
-			if (getY() + getHeight() >= 136*32) {
-				setY(136*32 - getHeight());
+			if (getY() + getHeight() >= 36*32) {
+				setY(36*32 - getHeight());
 				getNewRect();
 			}
 		}

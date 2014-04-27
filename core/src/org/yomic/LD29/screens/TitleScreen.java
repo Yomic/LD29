@@ -127,7 +127,9 @@ public class TitleScreen implements Screen, InputProcessor{
 
 	@Override
 	public void dispose() {
-		
+		creditsTexture.dispose();
+		intro1Texture.dispose();
+		intro2Texture.dispose();
 	}
 
 }

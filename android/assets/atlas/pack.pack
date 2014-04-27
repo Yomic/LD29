@@ -1,0 +1,227 @@
+
+pack.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+blackScreen
+  rotate: false
+  xy: 0, 544
+  size: 640, 480
+  orig: 640, 480
+  offset: 0, 0
+  index: -1
+Credits
+  rotate: false
+  xy: 0, 64
+  size: 640, 480
+  orig: 640, 480
+  offset: 0, 0
+  index: -1
+boss
+  rotate: false
+  xy: 640, 928
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+pearl
+  rotate: false
+  xy: 0, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+pearl_door
+  rotate: false
+  xy: 0, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock
+  rotate: false
+  xy: 640, 896
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_BL
+  rotate: false
+  xy: 736, 992
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_bottom
+  rotate: false
+  xy: 32, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_BR
+  rotate: false
+  xy: 32, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_left
+  rotate: false
+  xy: 640, 864
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_mid
+  rotate: false
+  xy: 672, 896
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_right
+  rotate: false
+  xy: 736, 960
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_solid
+  rotate: false
+  xy: 768, 992
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_TL
+  rotate: false
+  xy: 64, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_top
+  rotate: false
+  xy: 64, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock_wall_TR
+  rotate: false
+  xy: 640, 832
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sandground
+  rotate: false
+  xy: 672, 864
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+savepoint
+  rotate: false
+  xy: 704, 896
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+seaweed
+  rotate: false
+  xy: 736, 928
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spike_bottom
+  rotate: false
+  xy: 768, 960
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spike_left
+  rotate: false
+  xy: 800, 992
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spike_right
+  rotate: false
+  xy: 96, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spike_top
+  rotate: false
+  xy: 96, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 640, 800
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star_door
+  rotate: false
+  xy: 672, 832
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+urchin
+  rotate: false
+  xy: 704, 871
+  size: 26, 25
+  orig: 26, 25
+  offset: 0, 0
+  index: -1
+fish1
+  rotate: false
+  xy: 736, 912
+  size: 26, 16
+  orig: 26, 16
+  offset: 0, 0
+  index: -1
+fish2
+  rotate: false
+  xy: 768, 944
+  size: 26, 16
+  orig: 26, 16
+  offset: 0, 0
+  index: -1
+fish3
+  rotate: false
+  xy: 800, 976
+  size: 26, 16
+  orig: 26, 16
+  offset: 0, 0
+  index: -1
+bubble
+  rotate: false
+  xy: 832, 1017
+  size: 7, 7
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+
+pack2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Outro1
+  rotate: false
+  xy: 0, 0
+  size: 640, 480
+  orig: 640, 480
+  offset: 0, 0
+  index: -1
