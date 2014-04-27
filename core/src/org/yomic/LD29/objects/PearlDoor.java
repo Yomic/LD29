@@ -1,5 +1,7 @@
 package org.yomic.LD29.objects;
 
+import org.yomic.LD29.SoundFX;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class PearlDoor extends Actor {
@@ -16,6 +18,7 @@ public class PearlDoor extends Actor {
 		if (this.alive && this.rect.overlaps(player.rect)) {
 			if (player.pearls > 0) {
 				player.pearls -= 1;
+				SoundFX.sfx.playUnlock();
 				die();
 				player.addDoorCounter();
 			}

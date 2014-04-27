@@ -1,5 +1,7 @@
 package org.yomic.LD29.objects;
 
+import org.yomic.LD29.SoundFX;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Starfish extends Actor {
@@ -15,7 +17,8 @@ public class Starfish extends Actor {
 		if (isAlive()) {			
 			if (player.rect.overlaps(this.rect)) {
 				player.giveStarfish();
-				player.savedPosition.set(player.getX(), player.getY());				
+				player.savedPosition.set(player.getX(), player.getY());
+				SoundFX.sfx.playGetItem();
 				die();				
 			}
 		}

@@ -2,6 +2,7 @@ package org.yomic.LD29.objects;
 
 import java.util.ArrayList;
 
+import org.yomic.LD29.SoundFX;
 import org.yomic.LD29.objects.Actor.ActorType;
 
 import com.badlogic.gdx.Input.Keys;
@@ -14,13 +15,17 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Sprite implements InputProcessor {
 	
-	enum STATE {Idle, Moving}
-	@SuppressWarnings("unused")
+	public enum STATE {Idle, Moving}
 	private STATE currentState;
-	enum FACING {LEFT, RIGHT};
+	public enum FACING {LEFT, RIGHT};
 	private FACING facing;
 	Vector2 savedPosition;
 	private boolean confined;
+	private float lastTimeHurt, lastTimeSaved;
+	
+	public STATE getState() {
+		return this.currentState;
+	}
 	
 	Sprite sprite;
 	Vector2 acceleration = new Vector2();
@@ -31,7 +36,6 @@ public class Player extends Sprite implements InputProcessor {
 	
 	public void addDoorCounter() {
 		this.unlockedDoors += 1;
-		System.out.println("Unlocked " + this.unlockedDoors + " doors.");
 	}
 	
 	public int getUnlockedDoors() {
@@ -55,6 +59,8 @@ public class Player extends Sprite implements InputProcessor {
 		savedPosition = new Vector2(x, y);
 		this.confined = false;
 		this.facing = FACING.RIGHT;
+		this.lastTimeHurt = 0;
+		this.lastTimeSaved = 0;
 		reset();
 	}
 	
@@ -69,6 +75,9 @@ public class Player extends Sprite implements InputProcessor {
 		float previousX = getX();
 		float previousY = getY();
 		
+		lastTimeHurt += delta;
+		lastTimeSaved += delta;
+		
 		setX(getX() + velocity.x * delta);
 		getNewRect();
 		checkCollisionX(tiledObjects, actors, previousX);
@@ -77,14 +86,14 @@ public class Player extends Sprite implements InputProcessor {
 		getNewRect();
 		checkCollisionY(tiledObjects, actors, previousY);
 		
-		if (velocity.x == 0 && velocity.y == 0) {
-			this.currentState = STATE.Idle;
-		}
-		
 		for (Actor a : actors) {
 			if (a.isHarmful() && this.rect.overlaps(a.rect)) {
-				//TODO play SFX; let player know that was a bad thing to touch
+				if (lastTimeHurt > 1) {
+					SoundFX.sfx.playHurt();
+					lastTimeHurt = 0;
+				}				
 				reset();
+				break;
 			}			
 		}
 		
@@ -131,10 +140,18 @@ public class Player extends Sprite implements InputProcessor {
 			}
 			
 			if (a.thisType == ActorType.SavePoint && this.rect.overlaps(a.rect)) {
-				savedPosition.set(getX(), getY());
+				savePoint();
 			}
 		}
 		
+	}
+
+	private void savePoint() {
+		if (lastTimeSaved > 2) {
+			SoundFX.sfx.playSave();
+			lastTimeSaved = 0;
+		}		
+		savedPosition.set(getX(), getY());
 	}
 	
 	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousY) {
@@ -173,7 +190,7 @@ public class Player extends Sprite implements InputProcessor {
 			}
 			
 			if (a.thisType == ActorType.SavePoint && this.rect.overlaps(a.rect)) {
-				savedPosition.set(getX(), getY());
+				savePoint();
 			}
 		}
 		
@@ -187,6 +204,10 @@ public class Player extends Sprite implements InputProcessor {
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
 		shapeRenderer.end();
+	}
+	
+	public FACING getFacing() {
+		return this.facing;
 	}
 	
 	@Override
@@ -234,6 +255,7 @@ public class Player extends Sprite implements InputProcessor {
 			velocity.x -= moveSpeed;
 			break;
 		}
+		if (velocity.x == 0 && velocity.y == 0) currentState = STATE.Idle; 
 		return true;
 	}
 

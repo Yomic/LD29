@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.yomic.LD29.LD29;
+import org.yomic.LD29.SoundFX;
 import org.yomic.LD29.objects.Actor;
 import org.yomic.LD29.objects.Actor.ActorType;
 import org.yomic.LD29.objects.Boss;
 import org.yomic.LD29.objects.Pearl;
 import org.yomic.LD29.objects.PearlDoor;
 import org.yomic.LD29.objects.Player;
+import org.yomic.LD29.objects.Player.FACING;
+import org.yomic.LD29.objects.Player.STATE;
 import org.yomic.LD29.objects.SavePoint;
 import org.yomic.LD29.objects.Spikes;
 import org.yomic.LD29.objects.Spikes.SpikeDir;
@@ -52,6 +55,7 @@ public class GameScreen implements Screen, InputProcessor {
 	spikeBtexture, spikeTtexture, spikeLtexture, spikeRtexture, 
 	urchinTexture, saveTexture, bubbleTexture, seaweedTexture, rockTexture, bossTexture,
 	blackScreenTexture, creditsTexture, outro1Texture;
+	TextureRegion[] fishRegion;
 	Sprite blackScreen, intro1, intro2, outro1;
 	TextureAtlas atlas;
 	
@@ -173,7 +177,16 @@ public class GameScreen implements Screen, InputProcessor {
 		creditsTexture = atlas.findRegion("Credits");	
 		outro1Texture = atlas.findRegion("Outro1");
 		blackScreen = new Sprite(blackScreenTexture);
-		outro1 = new Sprite(outro1Texture);		
+		outro1 = new Sprite(outro1Texture);	
+		
+		fishRegion = new TextureRegion[4];
+		
+		fishRegion[0] = atlas.findRegion("fish1");
+		fishRegion[1] = atlas.findRegion("fish2");
+		fishRegion[2] = atlas.findRegion("fish3");
+		fishRegion[3] = atlas.findRegion("fish2");
+		
+		playerAnimation = new Animation(0.25f, fishRegion);
 		
 		player = new Player(new Sprite(new Texture(Gdx.files.internal("fish1.png"))), 14*32, 192*32);
 		
@@ -206,6 +219,7 @@ public class GameScreen implements Screen, InputProcessor {
 	boolean bossDefeated = false;
 	boolean gameWon = false;
 	float deltaBoss = 0;
+	float deltaAnimation = 0;
 	
 	@Override
 	public void render(float delta) {		
@@ -251,11 +265,15 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		if (gameWon) gameWonEvents(delta);
 		
+		deltaAnimation += delta;
+		if (player.getState() == STATE.Moving) deltaAnimation += delta; //add delta again to make it look like it's going faster
+		player.setRegion(playerAnimation.getKeyFrame(deltaAnimation, true));
+		if (player.getFacing() == FACING.LEFT) player.flip(true, false);
 		player.update(delta, tiledObjects, objects);
 		
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
-		int nearBy = 0;
+		
 		for (Actor a : objects) {
 			if (a.isAlive() && a != null) {
 				boolean closeToPlayer = Math.abs(player.getX() - a.getX()) < LD29.CAMERA_WIDTH/2 || 
@@ -264,7 +282,6 @@ public class GameScreen implements Screen, InputProcessor {
 				if (a.thisType == ActorType.Pearl && closeToPlayer) a.update(delta, player);
 				if (a.thisType == ActorType.Starfish && closeToPlayer) a.update(delta, player);
 				if (a.thisType == ActorType.Urchin && closeToPlayer) {
-					nearBy++;
 					a.update(delta, tiledObjects, player);
 					
 					if (player.isConfined()) {
@@ -276,7 +293,7 @@ public class GameScreen implements Screen, InputProcessor {
 				a.draw(spriteBatch);
 			}			
 		}
-		System.out.println(nearBy);
+		
 		if (showBoss) {
 			boss.setColor(bossTint, bossTint, bossTint, bossAlpha);
 			boss.draw(spriteBatch);
@@ -308,7 +325,7 @@ public class GameScreen implements Screen, InputProcessor {
 	float blackScreenAlpha = 0;
 	
 	private void bossEvents(float deltaBoss, float delta) {
-		/* Uncomment this to go straight to the boss fight
+		/* Uncomment to start at boss fight
 		if (!haveConfinedPlayer) {			
 			player.confine();
 			player.setPosition(52*32, 25*32);
@@ -316,6 +333,7 @@ public class GameScreen implements Screen, InputProcessor {
 			player.resetDoorCounter();
 		}
 		*/
+		
 		
 		player.setSavedPosition(53*32, 35*32);
 		
@@ -337,10 +355,16 @@ public class GameScreen implements Screen, InputProcessor {
 		if (deltaBoss > 2 && deltaBoss < 7) {
 			if (cameraShakeRight) {
 				cameraOffsetX += 1;
-				if (cameraOffsetX >= 3) cameraShakeRight = false;
+				if (cameraOffsetX >= 3) {
+					//SoundFX.sfx.playShakeScreen();
+					cameraShakeRight = false;
+				}
 			} else {
 				cameraOffsetX -= 1;
-				if (cameraOffsetX <= -3) cameraShakeRight = true;
+				if (cameraOffsetX <= -3) {
+					cameraShakeRight = true;
+					SoundFX.sfx.playShakeScreen();
+				}
 			}
 		}
 		
@@ -380,10 +404,16 @@ public class GameScreen implements Screen, InputProcessor {
 		if (deltaBossDead > 1 && deltaBossDead < 8) {
 			if (cameraShakeRight) {
 				cameraOffsetX += 1;
-				if (cameraOffsetX >= 3) cameraShakeRight = false;
+				if (cameraOffsetX >= 3) {
+					SoundFX.sfx.playShakeScreen();
+					cameraShakeRight = false;
+				}
 			} else {
 				cameraOffsetX -= 1;
-				if (cameraOffsetX <= -3) cameraShakeRight = true;
+				if (cameraOffsetX <= -3) {
+					SoundFX.sfx.playShakeScreen();
+					cameraShakeRight = true;
+				}
 			}
 		}
 		

@@ -43,7 +43,7 @@ public class Actor extends TiledObject implements ActorInterface {
 		for (TiledObject o : tiledObjects) {
 			if (this.rect.overlaps(o.rect) && o.blocked) {
 				setX(previousX);
-				getNewRect();
+				//getNewRect();
 				return true;
 			}
 		}
@@ -55,7 +55,7 @@ public class Actor extends TiledObject implements ActorInterface {
 		for (TiledObject o : tiledObjects) {
 			if (this.rect.overlaps(o.rect) && o.blocked) {				
 				setY(previousY);
-				getNewRect();
+				//getNewRect();
 				return true;
 			}
 		}
