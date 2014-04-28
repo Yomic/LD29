@@ -25,7 +25,6 @@ import org.yomic.LD29.objects.Wall;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -40,7 +39,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-public class GameScreen implements Screen, InputProcessor {
+public class GameScreen implements Screen {
 	
 	Game game;
 	enum gameStates {Init, Playing}
@@ -54,9 +53,9 @@ public class GameScreen implements Screen, InputProcessor {
 	TextureRegion wallTexture, pearlTexture, pearlDoorTexture, starfishTexture, starfishDoorTexture, 
 	spikeBtexture, spikeTtexture, spikeLtexture, spikeRtexture, 
 	urchinTexture, saveTexture, bubbleTexture, seaweedTexture, rockTexture, bossTexture,
-	blackScreenTexture, creditsTexture, outro1Texture;
+	blackScreenTexture, creditsTexture, outro1Texture, outro2Texture;
 	TextureRegion[] fishRegion;
-	Sprite blackScreen, intro1, intro2, outro1;
+	Sprite blackScreen, intro1, intro2, outro1, outro2;
 	TextureAtlas atlas;
 	
 	//Tiled object setup
@@ -176,8 +175,10 @@ public class GameScreen implements Screen, InputProcessor {
 		blackScreenTexture = atlas.findRegion("blackScreen");
 		creditsTexture = atlas.findRegion("Credits");	
 		outro1Texture = atlas.findRegion("Outro1");
+		outro2Texture = atlas.findRegion("Outro2");
 		blackScreen = new Sprite(blackScreenTexture);
-		outro1 = new Sprite(outro1Texture);	
+		outro1 = new Sprite(outro1Texture);
+		outro2 = new Sprite(outro2Texture);		
 		
 		fishRegion = new TextureRegion[4];
 		
@@ -197,10 +198,7 @@ public class GameScreen implements Screen, InputProcessor {
 			keysSpawned[i] = false;
 		}		
 		
-		inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(this);
-		inputMultiplexer.addProcessor(player);
-		Gdx.input.setInputProcessor(inputMultiplexer);
+		Gdx.input.setInputProcessor(player);
 		
 		tiledObjects = new ArrayList<TiledObject>();
 		objects = new ArrayList<Actor>();
@@ -222,8 +220,7 @@ public class GameScreen implements Screen, InputProcessor {
 	float deltaAnimation = 0;
 	
 	@Override
-	public void render(float delta) {		
-		
+	public void render(float delta) {
 		if (player.getY() < 36*32) {
 			//final boss area
 			if (!haveConfinedPlayer) {
@@ -237,9 +234,10 @@ public class GameScreen implements Screen, InputProcessor {
 			camera.position.set((int)(player.getX() + player.getWidth()/2), (int)(player.getY() + player.getHeight() / 2), 0);
 		}
 		
+		
 		if (gameWon) {
 			player.setPosition(16*32, 30*32);
-			inputMultiplexer.removeProcessor(player);
+			Gdx.input.setInputProcessor(null);
 			camera.position.set((int)(16*32), (int)(30*32), 0);			
 		}
 		
@@ -276,21 +274,42 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		for (Actor a : objects) {
 			if (a.isAlive() && a != null) {
-				boolean closeToPlayer = Math.abs(player.getX() - a.getX()) < LD29.CAMERA_WIDTH/2 || 
-						Math.abs(player.getY() - a.getY()) < LD29.CAMERA_HEIGHT/2;
+				boolean closeToPlayer;
 				
-				if (a.thisType == ActorType.Pearl && closeToPlayer) a.update(delta, player);
-				if (a.thisType == ActorType.Starfish && closeToPlayer) a.update(delta, player);
-				if (a.thisType == ActorType.Urchin && closeToPlayer) {
+				if (!player.isConfined()) {
+					closeToPlayer = Math.abs(player.getX() - a.getX()) < LD29.CAMERA_WIDTH/2 ||
+							Math.abs(player.getY() - a.getY()) < LD29.CAMERA_HEIGHT/2;
+				} else {
+					closeToPlayer = Math.abs(player.getX() - a.getX()) < LD29.CAMERA_WIDTH*2 ||
+							Math.abs(player.getY() - a.getY()) < LD29.CAMERA_HEIGHT*2;
+				}					
+				
+				if (a.thisType == ActorType.Pearl && closeToPlayer) {
+					a.update(delta, player);
+					a.draw(spriteBatch);
+				} else if (a.thisType == ActorType.Starfish && closeToPlayer) {
+					a.update(delta, player);
+					a.draw(spriteBatch);
+				} else if (a.thisType == ActorType.Urchin && closeToPlayer) {
+					
 					a.update(delta, tiledObjects, player);
 					
 					if (player.isConfined()) {
 						if (a.getY() > 40*32) a.die();
 					}
+					
+					a.draw(spriteBatch);
+				} else if (a.thisType == ActorType.PearlDoor && closeToPlayer) {
+					a.update(player);
+					a.draw(spriteBatch);
+				} else if (a.thisType == ActorType.StarfishDoor && closeToPlayer) {
+					a.update(player);
+					a.draw(spriteBatch);
+				} else if (a.thisType == ActorType.Spikes && closeToPlayer) {
+					a.draw(spriteBatch);
+				} else {
+					if (closeToPlayer) a.draw(spriteBatch);
 				}
-				if (a.thisType == ActorType.PearlDoor && closeToPlayer) a.update(player);
-				if (a.thisType == ActorType.StarfishDoor && closeToPlayer) a.update(player);
-				a.draw(spriteBatch);
 			}			
 		}
 		
@@ -312,9 +331,13 @@ public class GameScreen implements Screen, InputProcessor {
 			outro1.setPosition(player.getX() - Gdx.graphics.getWidth()/2, player.getY() - Gdx.graphics.getHeight()/2);
 			outro1.setColor(1, 1, 1, outroAlpha);
 			outro1.draw(spriteBatch);
+			
+			outro2.setPosition(player.getX() - Gdx.graphics.getWidth()/2, player.getY() - Gdx.graphics.getHeight()/2);
+			outro2.setColor(1, 1, 1, outro2Alpha);
+			outro2.draw(spriteBatch);
 		}
 		
-		spriteBatch.end();		
+		spriteBatch.end();
 	}
 	
 	boolean spawnWave = true;
@@ -332,8 +355,7 @@ public class GameScreen implements Screen, InputProcessor {
 			haveConfinedPlayer = true;
 			player.resetDoorCounter();
 		}
-		*/
-		
+		*/		
 		
 		player.setSavedPosition(53*32, 35*32);
 		
@@ -392,6 +414,7 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		
 		if (deltaBossDead > 2 && deltaBossDead < 4) {
+			if (deltaBoss < 49) beatBossEarly = true;
 			bossTint -= .01;
 			if (bossTint < 0) bossTint = 0;
 		}
@@ -427,7 +450,7 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		
 		if (deltaBossDead > 12) {
-			gameWon = true;
+			gameWon = true;			
 		}
 		
 		if (deltaBoss > 10 && !keysSpawned[0]) {			
@@ -463,6 +486,8 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private float deltaWonEvents = 0;
 	private float outroAlpha = 0;
+	private float outro2Alpha = 0;
+	private boolean beatBossEarly = false;
 	private void gameWonEvents(float delta) {
 		deltaWonEvents += delta;
 		
@@ -474,6 +499,11 @@ public class GameScreen implements Screen, InputProcessor {
 		if (deltaWonEvents > 5) {
 			outroAlpha += .01;
 			if (outroAlpha > 1) outroAlpha = 1;
+		}
+		
+		if (deltaWonEvents > 10 && beatBossEarly) {
+			outro2Alpha += .01;
+			if (outro2Alpha > 1) outro2Alpha = 1;
 		}
 	}
 
@@ -525,45 +555,4 @@ public class GameScreen implements Screen, InputProcessor {
 			a.getTexture().dispose();
 		}
 	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		return false;
-	}
-
 }

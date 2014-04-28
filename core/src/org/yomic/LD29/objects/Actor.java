@@ -65,4 +65,8 @@ public class Actor extends TiledObject implements ActorInterface {
 	void getNewRect() {
 		this.rect = new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
+	
+	public void setSpeed(int speed) {
+		
+	}
 }

@@ -10,7 +10,7 @@ public class Urchin extends Actor {
 	enum UrchinFacing {Left, Right, Up, Down}
 	UrchinFacing currentFacing;
 	Vector2 velocity = new Vector2();
-	int speed = 120;
+	int speed = 100;
 
 	public Urchin(Sprite sprite, int x, int y, boolean UD) {
 		super(sprite, x, y);
@@ -22,6 +22,11 @@ public class Urchin extends Actor {
 			currentFacing = UrchinFacing.Right;
 		}
 		
+	}
+	
+	@Override
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 
 	@Override

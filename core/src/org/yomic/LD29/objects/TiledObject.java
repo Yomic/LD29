@@ -30,6 +30,10 @@ public class TiledObject extends Sprite {
 		this.alive = false;
 	}
 	
+	public void revive() {
+		this.alive = true;
+	}
+	
 	public boolean isAlive() {
 		return this.alive;
 	}
