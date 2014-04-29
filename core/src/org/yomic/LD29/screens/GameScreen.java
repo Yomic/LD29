@@ -64,6 +64,7 @@ public class GameScreen implements Screen {
 	TiledMapTileLayer collisionLayer;
 	TiledMapTileLayer objectLayer;
 	ArrayList<TiledObject> tiledObjects;
+	ArrayList<TiledObject> solidObjects;
 	ArrayList<Actor> objects;
 	
 	//Boss stuff
@@ -90,6 +91,7 @@ public class GameScreen implements Screen {
 				
 				if (collisionLayer.getCell(x, y).getTile() != null && collisionLayer.getCell(x, y).getTile().getProperties().containsKey("blocked")) {
 					tiledObjects.add(new Wall(new Sprite(wallTexture), true, x, y));
+					solidObjects.add(new Wall(new Sprite(wallTexture), true, x, y));
 				}
 				if (collisionLayer.getCell(x, y).getTile() != null && collisionLayer.getCell(x, y).getTile().getProperties().containsKey("fakewall")) {
 					tiledObjects.add(new Wall(new Sprite(wallTexture), false, x, y));
@@ -140,10 +142,10 @@ public class GameScreen implements Screen {
 				}
 				
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("urchinUD")) {
-					objects.add(new Urchin(new Sprite(urchinTexture), x, y, true));
+					objects.add(new Urchin(new Sprite(urchinTexture), x, y, true, solidObjects));
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("urchinLR")) {
-					objects.add(new Urchin(new Sprite(urchinTexture), x, y, false));
+					objects.add(new Urchin(new Sprite(urchinTexture), x, y, false, solidObjects));
 				}
 				
 				
@@ -201,6 +203,7 @@ public class GameScreen implements Screen {
 		Gdx.input.setInputProcessor(player);
 		
 		tiledObjects = new ArrayList<TiledObject>();
+		solidObjects = new ArrayList<TiledObject>();
 		objects = new ArrayList<Actor>();
 		loadMap();
 	}
@@ -252,8 +255,6 @@ public class GameScreen implements Screen {
 		
 		renderer.setView(camera);
 		renderer.render(background);
-		renderer.getSpriteBatch().begin();
-		renderer.getSpriteBatch().end();
 		
 		if (player.isConfined() && !gameWon) {
 			deltaBoss += delta;
@@ -292,7 +293,7 @@ public class GameScreen implements Screen {
 					a.draw(spriteBatch);
 				} else if (a.thisType == ActorType.Urchin && closeToPlayer) {
 					
-					a.update(delta, tiledObjects, player);
+					a.update(delta, player);
 					
 					if (player.isConfined()) {
 						if (a.getY() > 40*32) a.die();
@@ -348,7 +349,7 @@ public class GameScreen implements Screen {
 	float blackScreenAlpha = 0;
 	
 	private void bossEvents(float deltaBoss, float delta) {
-		/* Uncomment to start at boss fight
+		/* Uncomment this and the confined check above to start at boss fight
 		if (!haveConfinedPlayer) {			
 			player.confine();
 			player.setPosition(52*32, 25*32);
@@ -395,7 +396,7 @@ public class GameScreen implements Screen {
 			Random random = new Random();
 			int randInt = random.nextInt(16);
 			for (int x = 44; x < 62; x++) {
-				if (x != 45+randInt) objects.add(new Urchin(new Sprite(urchinTexture), x, 200-174, true));
+				if (x != 45+randInt) objects.add(new Urchin(new Sprite(urchinTexture), x, 200-174, true, solidObjects));
 			}
 			spawnWave = false;
 		}

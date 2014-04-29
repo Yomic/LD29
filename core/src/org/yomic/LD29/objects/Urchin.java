@@ -11,11 +11,15 @@ public class Urchin extends Actor {
 	UrchinFacing currentFacing;
 	Vector2 velocity = new Vector2();
 	int speed = 100;
+	
+	ArrayList<TiledObject> tiles;
 
-	public Urchin(Sprite sprite, int x, int y, boolean UD) {
+	public Urchin(Sprite sprite, int x, int y, boolean UD, ArrayList<TiledObject> tiles) {
 		super(sprite, x, y);
 		this.thisType = ActorType.Urchin;
 		this.harmful = true;
+		this.tiles = tiles;
+		System.out.println(tiles.size());
 		if (UD) {
 			currentFacing = UrchinFacing.Up;
 		} else {
@@ -30,7 +34,7 @@ public class Urchin extends Actor {
 	}
 
 	@Override
-	public void update(float delta, ArrayList<TiledObject> tiles, Player player) {
+	public void update(float delta, Player player) {
 		
 		if (isAlive()) {
 			
@@ -50,13 +54,13 @@ public class Urchin extends Actor {
 			
 			if (Math.abs(velocity.x) > 0) {
 				setX(getX() + velocity.x * delta);
-				getNewRect();
+				this.rect.x = getX();
 				changeDir = checkCollisionX(tiles, previousX);
 			}			
 			
 			if (Math.abs(velocity.y) > 0) {
 				setY(getY() + velocity.y * delta);
-				getNewRect();
+				this.rect.y = getY();
 				changeDir = checkCollisionY(tiles, previousY);
 			}			
 			
