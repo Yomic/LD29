@@ -11,6 +11,8 @@ public class LD29 extends Game {
 	Texture img;
 	public final static int CAMERA_WIDTH = 640;
 	public final static int CAMERA_HEIGHT = 480;
+	public final static int TILE_WIDTH = 32;
+	public final static int TILE_HEIGHT = 32;
 	
 	@Override
 	public void create () {

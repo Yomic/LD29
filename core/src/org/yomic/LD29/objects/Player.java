@@ -2,6 +2,7 @@ package org.yomic.LD29.objects;
 
 import java.util.ArrayList;
 
+import org.yomic.LD29.LD29;
 import org.yomic.LD29.SoundFX;
 import org.yomic.LD29.objects.Actor.ActorType;
 
@@ -10,6 +11,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,10 +26,6 @@ public class Player extends Sprite implements InputProcessor {
 	private boolean confined;
 	private float lastTimeHurt, lastTimeSaved;
 	
-	public STATE getState() {
-		return this.currentState;
-	}
-	
 	Sprite sprite;
 	Vector2 acceleration = new Vector2();
 	Vector2 velocity = new Vector2();
@@ -34,25 +33,11 @@ public class Player extends Sprite implements InputProcessor {
 	
 	int pearls, starfish, unlockedDoors;
 	
-	public void addDoorCounter() {
-		this.unlockedDoors += 1;
-	}
-	
-	public int getUnlockedDoors() {
-		return this.unlockedDoors;
-	}
-	
-	public void resetDoorCounter() {
-		this.unlockedDoors = 0;
-	}
-	
-	public void setSavedPosition(int x, int y) {
-		this.savedPosition.set(x, y);
-	}
-	
 	private float moveSpeed = 240;
 	
-	public Player (Sprite sprite, int x, int y) {
+	private TiledMapTileLayer tiledObjects;
+	
+	public Player (Sprite sprite, int x, int y, TiledMapTileLayer collisionLayer) {
 		super(sprite);
 		this.pearls = 0;
 		this.starfish = 0;
@@ -61,6 +46,7 @@ public class Player extends Sprite implements InputProcessor {
 		this.facing = FACING.RIGHT;
 		this.lastTimeHurt = 0;
 		this.lastTimeSaved = 0;
+		this.tiledObjects = collisionLayer;
 		reset();
 	}
 	
@@ -68,9 +54,11 @@ public class Player extends Sprite implements InputProcessor {
 		this.currentState = STATE.Idle;		
 		rect = new Rectangle();
 		this.setPosition(savedPosition.x, savedPosition.y);
+		rect.width = getWidth();
+		rect.height = getHeight();
 	}
 	
-	public void update(float delta, ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors) {
+	public void update(float delta, ArrayList<Actor> actors) {
 		
 		float previousX = getX();
 		float previousY = getY();
@@ -79,12 +67,12 @@ public class Player extends Sprite implements InputProcessor {
 		lastTimeSaved += delta;
 		
 		setX(getX() + velocity.x * delta);
-		getNewRect();
-		checkCollisionX(tiledObjects, actors, previousX);
+		this.rect.x = getX();
+		checkCollisionX(actors, previousX);
 		
 		setY(getY() + velocity.y * delta);
-		getNewRect();
-		checkCollisionY(tiledObjects, actors, previousY);
+		this.rect.y = getY();
+		checkCollisionY(actors, previousY);
 		
 		for (Actor a : actors) {
 			if (a.isHarmful() && this.rect.overlaps(a.rect)) {
@@ -112,29 +100,21 @@ public class Player extends Sprite implements InputProcessor {
 		this.starfish += 1;
 	}
 	
-	private void checkCollisionX(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousX) {
+	private void checkCollisionX(ArrayList<Actor> actors, float previousX) {
 		
 		if (getX() < 0 || getX() + getWidth() > 100*32) {
 			setX(previousX);
-			getNewRect();			
-		}
-		
-		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {
-				setX(previousX);
-				getNewRect();
-				break;
-			}
+			this.rect.x = getX();	
 		}
 		
 		for (Actor a : actors) {
 			if (a.blocked && this.rect.overlaps(a.rect)) {
 				if ((a.thisType == ActorType.PearlDoor && this.pearls > 0 || !a.alive) ||
-						(a.thisType == ActorType.StarfishDoor && this.starfish > 0 || !a.alive)) {					
+						(a.thisType == ActorType.StarfishDoor && this.starfish > 0 || !a.alive)) {
 					//go through
 				} else {					
 					setX(previousX);
-					getNewRect();
+					this.rect.x = getX();
 					break;
 				}				
 			}
@@ -144,37 +124,50 @@ public class Player extends Sprite implements InputProcessor {
 			}
 		}
 		
+		boolean collisionX = false;
+		
+		//top left
+		collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+		
+		//mid left
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int) ((getY() + getHeight() / 2) / LD29.TILE_HEIGHT)));
+	    		
+		//bot left
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int) (getY() / LD29.TILE_HEIGHT)));				
+				
+		//top right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));			
+			
+		//mid right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight() / 2) / LD29.TILE_HEIGHT)));				
+						
+		//bot right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));
+		
+		if (collisionX) {
+			setX(previousX);
+			this.rect.x = getX();
+		}
+		
 	}
 
-	private void savePoint() {
-		if (lastTimeSaved > 2) {
-			SoundFX.sfx.playSave();
-			lastTimeSaved = 0;
-		}		
-		savedPosition.set(getX(), getY());
-	}
-	
-	private void checkCollisionY(ArrayList<TiledObject> tiledObjects, ArrayList<Actor> actors, float previousY) {
+	private void checkCollisionY(ArrayList<Actor> actors, float previousY) {
 		
 		if (!confined) {
 			if (getY() < 0 || getY() + getHeight() > 200*32) {
 				setY(previousY);
-				getNewRect();
+				this.rect.y = getY();
 			}
 		} else {
 			if (getY() + getHeight() >= 36*32) {
 				setY(36*32 - getHeight());
-				getNewRect();
+				this.rect.y = getY();
 			}
-		}
-		
-		
-		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {
-				setY(previousY);
-				getNewRect();
-				break;
-			}			
 		}
 		
 		for (Actor a : actors) {
@@ -184,7 +177,7 @@ public class Player extends Sprite implements InputProcessor {
 					//go through
 				} else {
 					setY(previousY);
-					getNewRect();
+					this.rect.y = getY();
 					break;
 				}				
 			}
@@ -194,16 +187,74 @@ public class Player extends Sprite implements InputProcessor {
 			}
 		}
 		
+		boolean collisionY = false;
+		
+		//bot left			
+		collisionY = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));			
+			
+		//bot mid			
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth() / 2) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));				
+			
+		//bot right
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));				
+			
+		//top left
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+			
+		//top mid
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth() / 2) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+							
+		//top right
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));				
+		
+		if (collisionY) {
+			setY(previousY);
+			this.rect.y = getY();
+		}
+		
 	}
 	
-	private void getNewRect() {
-		this.rect = new Rectangle(getX(), getY(), getWidth(), getHeight());
+	private boolean isCellBlocked(Cell cell) {		
+        return cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked");
+	}
+	
+	private void savePoint() {
+		if (lastTimeSaved > 2) {
+			SoundFX.sfx.playSave();
+			lastTimeSaved = 0;
+		}		
+		savedPosition.set(getX(), getY());
 	}
 	
 	public void drawRect(ShapeRenderer shapeRenderer) {
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
 		shapeRenderer.end();
+	}
+	
+	public STATE getState() {
+		return this.currentState;
+	}
+	
+	public void addDoorCounter() {
+		this.unlockedDoors += 1;
+	}
+	
+	public int getUnlockedDoors() {
+		return this.unlockedDoors;
+	}
+	
+	public void resetDoorCounter() {
+		this.unlockedDoors = 0;
+	}
+	
+	public void setSavedPosition(int x, int y) {
+		this.savedPosition.set(x, y);
 	}
 	
 	public FACING getFacing() {

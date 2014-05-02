@@ -19,7 +19,7 @@ public class Pearl extends Actor {
 				player.givePearl();
 				player.savedPosition.set(player.getX(), player.getY());
 				SoundFX.sfx.playGetItem();
-				die();				
+				die();
 			}
 		}
 	}

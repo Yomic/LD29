@@ -142,10 +142,10 @@ public class GameScreen implements Screen {
 				}
 				
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("urchinUD")) {
-					objects.add(new Urchin(new Sprite(urchinTexture), x, y, true, solidObjects));
+					objects.add(new Urchin(new Sprite(urchinTexture), x, y, true, collisionLayer));
 				}
 				if (objectLayer.getCell(x, y).getTile() != null && objectLayer.getCell(x, y).getTile().getProperties().containsKey("urchinLR")) {
-					objects.add(new Urchin(new Sprite(urchinTexture), x, y, false, solidObjects));
+					objects.add(new Urchin(new Sprite(urchinTexture), x, y, false, collisionLayer));
 				}
 				
 				
@@ -191,21 +191,20 @@ public class GameScreen implements Screen {
 		
 		playerAnimation = new Animation(0.25f, fishRegion);
 		
-		player = new Player(new Sprite(new Texture(Gdx.files.internal("fish1.png"))), 14*32, 192*32);
-		
 		boss = new Boss(new Sprite(bossTexture), 52, 25);
 		
 		keysSpawned = new boolean[6];
 		for (int i = 0; i < keysSpawned.length; i++) {
 			keysSpawned[i] = false;
-		}		
-		
-		Gdx.input.setInputProcessor(player);
+		}
 		
 		tiledObjects = new ArrayList<TiledObject>();
 		solidObjects = new ArrayList<TiledObject>();
 		objects = new ArrayList<Actor>();
 		loadMap();
+		
+		player = new Player(new Sprite(new Texture(Gdx.files.internal("fish1.png"))), 14*32, 192*32, collisionLayer);
+		Gdx.input.setInputProcessor(player);
 	}
 
 	@Override
@@ -268,7 +267,7 @@ public class GameScreen implements Screen {
 		if (player.getState() == STATE.Moving) deltaAnimation += delta; //add delta again to make it look like it's going faster
 		player.setRegion(playerAnimation.getKeyFrame(deltaAnimation, true));
 		if (player.getFacing() == FACING.LEFT) player.flip(true, false);
-		player.update(delta, tiledObjects, objects);
+		player.update(delta, objects);
 		
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
@@ -396,7 +395,7 @@ public class GameScreen implements Screen {
 			Random random = new Random();
 			int randInt = random.nextInt(16);
 			for (int x = 44; x < 62; x++) {
-				if (x != 45+randInt) objects.add(new Urchin(new Sprite(urchinTexture), x, 200-174, true, solidObjects));
+				if (x != 45+randInt) objects.add(new Urchin(new Sprite(urchinTexture), x, 200-174, true, collisionLayer));
 			}
 			spawnWave = false;
 		}

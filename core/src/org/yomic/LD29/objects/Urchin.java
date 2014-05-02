@@ -1,8 +1,7 @@
 package org.yomic.LD29.objects;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Urchin extends Actor {
@@ -12,14 +11,13 @@ public class Urchin extends Actor {
 	Vector2 velocity = new Vector2();
 	int speed = 100;
 	
-	ArrayList<TiledObject> tiles;
+	TiledMapTileLayer collisionLayer;
 
-	public Urchin(Sprite sprite, int x, int y, boolean UD, ArrayList<TiledObject> tiles) {
+	public Urchin(Sprite sprite, int x, int y, boolean UD, TiledMapTileLayer collisionMap) {
 		super(sprite, x, y);
 		this.thisType = ActorType.Urchin;
 		this.harmful = true;
-		this.tiles = tiles;
-		System.out.println(tiles.size());
+		this.collisionLayer = collisionMap;
 		if (UD) {
 			currentFacing = UrchinFacing.Up;
 		} else {
@@ -53,15 +51,15 @@ public class Urchin extends Actor {
 			}
 			
 			if (Math.abs(velocity.x) > 0) {
-				setX(getX() + velocity.x * delta);
+				setX(getX() + velocity.x * .0175f);
 				this.rect.x = getX();
-				changeDir = checkCollisionX(tiles, previousX);
+				changeDir = checkCollisionX(collisionLayer, previousX);
 			}			
 			
 			if (Math.abs(velocity.y) > 0) {
-				setY(getY() + velocity.y * delta);
+				setY(getY() + velocity.y * .0175f);
 				this.rect.y = getY();
-				changeDir = checkCollisionY(tiles, previousY);
+				changeDir = checkCollisionY(collisionLayer, previousY);
 			}			
 			
 			if (changeDir) {
@@ -79,8 +77,6 @@ public class Urchin extends Actor {
 			}
 			
 		}
-	}
-	
-	
+	}	
 	
 }

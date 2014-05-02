@@ -2,7 +2,11 @@ package org.yomic.LD29.objects;
 
 import java.util.ArrayList;
 
+import org.yomic.LD29.LD29;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Actor extends TiledObject implements ActorInterface {
@@ -10,6 +14,7 @@ public class Actor extends TiledObject implements ActorInterface {
 	boolean harmful;
 	public enum ActorType {Urchin, Pearl, PearlDoor, SavePoint, Spikes, Starfish, StarfishDoor, Boss}
 	public ActorType thisType;
+	private final String blockedKey = "blocked";
 
 	public Actor(Sprite sprite, int x, int y) {
 		super(sprite, false, x, y);
@@ -25,40 +30,80 @@ public class Actor extends TiledObject implements ActorInterface {
 
 	@Override
 	public void update(float delta, Player player) {
-		
+		System.out.println("Override update for object:  " + this.thisType.toString());
 	}
 
 	@Override
 	public void update(float delta) {
-		
+		System.out.println("Override update for object:  " + this.thisType.toString());
 	}
 
 	public void update(float delta, ArrayList<TiledObject> tiles, Player player) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Override update for object:  " + this.thisType.toString());
 	}
 	
-	boolean checkCollisionX(ArrayList<TiledObject> tiledObjects, float previousX) {
-		
-		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {
-				setX(previousX);
-				this.rect.x = getX();
-				return true;
-			}
-		}
-		return false;
+	private boolean isCellBlocked(Cell cell) {		
+        return cell.getTile() != null && cell.getTile().getProperties().containsKey(blockedKey);
 	}
 	
-	boolean checkCollisionY(ArrayList<TiledObject> tiledObjects, float previousY) {
-		for (TiledObject o : tiledObjects) {
-			if (this.rect.overlaps(o.rect) && o.blocked) {				
-				setY(previousY);
-				this.rect.y = getY();
-				return true;
-			}
-		}
-		return false;
+	boolean checkCollisionX(TiledMapTileLayer tiledObjects, float previousX) {
+		
+		boolean collisionX = false;
+		
+		//top left
+		collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+		
+		//mid left
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int) ((getY() + getHeight() / 2) / LD29.TILE_HEIGHT)));
+	    		
+		//bot left
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int) (getY() / LD29.TILE_HEIGHT)));				
+				
+		//top right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));			
+			
+		//mid right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight() / 2) / LD29.TILE_HEIGHT)));				
+						
+		//bot right
+		if (!collisionX)
+			collisionX = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));
+				
+		
+		return collisionX;
+	}
+	
+	boolean checkCollisionY(TiledMapTileLayer tiledObjects, float previousY) {
+		boolean collisionY = false;
+		
+		//bot left			
+		collisionY = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));			
+			
+		//bot mid			
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth() / 2) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));				
+			
+		//bot right
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)(getY() / LD29.TILE_HEIGHT)));				
+			
+		//top left
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)(getX() / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+			
+		//top mid
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth() / 2) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));
+							
+		//top right
+		if (!collisionY)
+			collisionY = isCellBlocked(tiledObjects.getCell((int)((getX() + getWidth()) / LD29.TILE_WIDTH),(int)((getY() + getHeight()) / LD29.TILE_HEIGHT)));				
+		
+		return collisionY;
 	}
 	
 	void getNewRect() {
