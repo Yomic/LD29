@@ -28,7 +28,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -180,7 +179,7 @@ public class GameScreen implements Screen {
 		outro2Texture = atlas.findRegion("Outro2");
 		blackScreen = new Sprite(blackScreenTexture);
 		outro1 = new Sprite(outro1Texture);
-		outro2 = new Sprite(outro2Texture);		
+		outro2 = new Sprite(outro2Texture);
 		
 		fishRegion = new TextureRegion[4];
 		
@@ -203,14 +202,15 @@ public class GameScreen implements Screen {
 		objects = new ArrayList<Actor>();
 		loadMap();
 		
-		player = new Player(new Sprite(new Texture(Gdx.files.internal("fish1.png"))), 14*32, 192*32, collisionLayer);
+		player = new Player(new Sprite(fishRegion[0]), 14*32, 192*32, collisionLayer);
+		
 		Gdx.input.setInputProcessor(player);
 	}
 
 	@Override
-	public void resize(int width, int height) {		
+	public void resize(int width, int height) {
 		this.camera = new OrthographicCamera(LD29.CAMERA_WIDTH, LD29.CAMERA_HEIGHT);
-		this.camera.position.set(LD29.CAMERA_WIDTH / 2f, LD29.CAMERA_HEIGHT / 2f, 0);
+		this.camera.position.set(LD29.CAMERA_WIDTH / 2f, LD29.CAMERA_HEIGHT / 2f, 0);		
 		this.camera.update();
 	}	
 	

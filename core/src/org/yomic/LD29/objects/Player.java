@@ -6,7 +6,9 @@ import org.yomic.LD29.LD29;
 import org.yomic.LD29.SoundFX;
 import org.yomic.LD29.objects.Actor.ActorType;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,8 +25,10 @@ public class Player extends Sprite implements InputProcessor {
 	public enum FACING {LEFT, RIGHT};
 	private FACING facing;
 	Vector2 savedPosition;
+	Vector2 direction;
 	private boolean confined;
 	private float lastTimeHurt, lastTimeSaved;
+	boolean isAndroid;
 	
 	Sprite sprite;
 	Vector2 acceleration = new Vector2();
@@ -39,6 +43,9 @@ public class Player extends Sprite implements InputProcessor {
 	
 	public Player (Sprite sprite, int x, int y, TiledMapTileLayer collisionLayer) {
 		super(sprite);
+		
+		isAndroid = Gdx.app.getType() == ApplicationType.Android;
+		
 		this.pearls = 0;
 		this.starfish = 0;
 		savedPosition = new Vector2(x, y);
@@ -47,6 +54,7 @@ public class Player extends Sprite implements InputProcessor {
 		this.lastTimeHurt = 0;
 		this.lastTimeSaved = 0;
 		this.tiledObjects = collisionLayer;
+		direction = new Vector2(0,0);
 		reset();
 	}
 	
@@ -66,11 +74,22 @@ public class Player extends Sprite implements InputProcessor {
 		lastTimeHurt += delta;
 		lastTimeSaved += delta;
 		
-		setX(getX() + velocity.x * delta);
+		System.out.println(direction.x * moveSpeed * delta + ", " + direction.y * moveSpeed * delta);
+		if (!isAndroid) {
+			setX((int)(getX() + (velocity.x * delta)));
+		} else {
+			setX((int)(getX() + (direction.x * moveSpeed * delta)));
+		}
+		
 		this.rect.x = getX();
 		checkCollisionX(actors, previousX);
 		
-		setY(getY() + velocity.y * delta);
+		if (!isAndroid) {
+			setY((int)(getY() + (velocity.y * delta)));
+		} else {
+			setY((int)(getY() + (direction.y * moveSpeed * delta)));
+		}
+		
 		this.rect.y = getY();
 		checkCollisionY(actors, previousY);
 		
@@ -102,7 +121,7 @@ public class Player extends Sprite implements InputProcessor {
 	
 	private void checkCollisionX(ArrayList<Actor> actors, float previousX) {
 		
-		if (getX() < 0 || getX() + getWidth() > 100*32) {
+		if (getX() < 32 || getX() + getWidth() > 99*32) {
 			setX(previousX);
 			this.rect.x = getX();	
 		}
@@ -159,7 +178,7 @@ public class Player extends Sprite implements InputProcessor {
 	private void checkCollisionY(ArrayList<Actor> actors, float previousY) {
 		
 		if (!confined) {
-			if (getY() < 0 || getY() + getHeight() > 200*32) {
+			if (getY() < 32 || getY() + getHeight() > 199*32) {
 				setY(previousY);
 				this.rect.y = getY();
 			}
@@ -317,17 +336,64 @@ public class Player extends Sprite implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
+		screenY = Gdx.graphics.getHeight() - screenY;
+		
+		int playerX = (int)Gdx.graphics.getWidth()/2;
+		int playerY = (int)Gdx.graphics.getHeight()/2;
+		
+		float distance = (float) Math.sqrt(
+										 Math.pow(screenX - (playerX), 2) + 
+										 Math.pow(screenY - (playerY), 2)
+										 );
+				
+		direction = new Vector2((screenX - (playerX)) / distance,
+								(screenY - (playerY)) / distance);
+		
+		currentState = STATE.Moving;
+		
+		if (screenX > playerX) {
+			if (facing == FACING.LEFT) this.flip(true, false);
+			facing = FACING.RIGHT;
+		} else if (screenX < playerX) {
+			if (facing == FACING.RIGHT) this.flip(true, false);
+			facing = FACING.LEFT;
+		}
+		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
+		currentState = STATE.Idle;
+		direction.x = 0;
+		direction.y = 0;
+		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
+		screenY = Gdx.graphics.getHeight() - screenY;
+		
+		int playerX = (int)Gdx.graphics.getWidth()/2;
+		int playerY = (int)Gdx.graphics.getHeight()/2;
+		
+		float distance = (float) Math.sqrt(
+										 Math.pow(screenX - (playerX), 2) + 
+										 Math.pow(screenY - (playerY), 2)
+										 );
+				
+		direction = new Vector2((screenX - (playerX)) / distance,
+								(screenY - (playerY)) / distance);
+		
+		currentState = STATE.Moving;
+		
+		if (screenX > playerX) {
+			if (facing == FACING.LEFT) this.flip(true, false);
+			facing = FACING.RIGHT;
+		} else if (screenX < playerX) {
+			if (facing == FACING.RIGHT) this.flip(true, false);
+			facing = FACING.LEFT;
+		}
+		return true;
 	}
 
 	@Override
@@ -342,6 +408,10 @@ public class Player extends Sprite implements InputProcessor {
 
 	public boolean isConfined() {
 		return this.confined;
+	}
+	
+	public float getSpeed() {
+		return this.moveSpeed;
 	}
 	
 }
